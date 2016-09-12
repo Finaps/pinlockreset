@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<widget id="pinlockrest.widget.pinlockrest" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
+    <name>pinlockrest</name>
+    <description>Rest or change the pin of a mendix app within the app.</description>
+
+    <icon />
+
+    <properties>
+        <property key="appId" type="string" required="true" defaultValue="">
+            <caption>App Id</caption>
+            <category>Behavior</category>
+            <description>The Mobile App Id example: com.mendix.app</description>
+        </property>
+    </properties>
+</widget>
+
