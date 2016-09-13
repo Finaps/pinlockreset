@@ -33,12 +33,14 @@ define([
     "dojo/_base/array",
     "dojo/_base/lang",
     "dojo/text",
+    "dojo/on",
+    "dojo/query",
     "dojo/html",
     "dojo/_base/event",
 
     "pinlockrest/lib/jquery-1.11.2",
     "dojo/text!pinlockrest/widget/template/pinlockrest.html"
-], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, dojoLang, dojoText, dojoHtml, dojoEvent, _jQuery, widgetTemplate) {
+], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, dojoLang, dojoText, dojoOn, dojoQuery, dojoHtml, dojoEvent, _jQuery, widgetTemplate) {
     "use strict";
 
     var $ = _jQuery.noConflict(true);
@@ -50,8 +52,14 @@ define([
 
         // DOM elements
         inputNodes: null,
-        button1: null, 
+        input1: null, 
+        input2: null,
+        input3: null,
+        input4: null, 
+        input5: null, 
+        commandText: null, 
         infoTextNode: null,
+        del: null, 
 
         // Parameters configured in the Modeler.
         appId: null, 
@@ -93,13 +101,33 @@ define([
           logger.debug(this.id + ".uninitialize");
         },
         
+        _stopBubblingEventOnMobile: function (e) {
+            logger.debug(this.id + "._stopBubblingEventOnMobile");
+            if (typeof document.ontouchstart !== "undefined") {
+                dojoEvent.stop(e);
+            }
+        },
+        
         _events: function () {
             
-            this.connect(this.button1, "click", function(e){
-                this._numberButtonPress(this.button1.value);
-            });
+            var nl = dojoQuery(".numButtons", this.inputNodes); //get all the num buttons within this domnode
+            
+            dojoOn(nl, "click", dojoLang.hitch(this,function(e){
+                this._stopBubblingEventOnMobile(e); 
+                this._numberButtonPress(e.currentTarget.value);
+            }));
+            
+            dojoOn(this.del, "click", dojoLang.hitch(this, function(e){
+                this._stopBubblingEventOnMobile(e);
+                this._removeLastDigit(); 
+            }));
             
             
+        },
+        
+        _removeLastDigit: function(){
+          this._currentInput = this._currentInput.slice(0,-1); //remove last char from string - this is fine as well if empty.   
+            //todo update ui. 
         },
         
         _numberButtonPress: function(number){
@@ -116,11 +144,62 @@ define([
                     this._setPin(this._pinLocation, this._currentInput);
                     this._pinVerified = false; //reset state. 
                     this._resetInput(); 
+                    dojoHtml.set(this.infoTextNode, "Pin has been changed"); 
+                    dojoHtml.set(this.commandText, "Enter your pin");
                 }
                 else{
-                    this._pinVerified = this._verifyInput(this._pinLocation, this._currentInput); //check if pin is good
+                    this._verifyPin(this._pinLocation, this._currentInput, dojoLang.hitch(this, function(result){
+                        this._pinVerified = result; 
+                        dojoHtml.set(this.infoTextNode, "Pin Verified"); 
+                        dojoHtml.set(this.commandText, "Enter new pin");
+                    }));
                     this._resetInput(); 
                 }
+            }
+            
+            switch(this._currentInput.length){
+                case 1:
+                    dojoHtml.set(this.input1, "*");
+                    dojoHtml.set(this.input2, "");
+                    dojoHtml.set(this.input3, "");
+                    dojoHtml.set(this.input4, "");
+                    dojoHtml.set(this.input5, "");
+                    break;
+                case 2:
+                    dojoHtml.set(this.input1, "*");
+                    dojoHtml.set(this.input2, "*");
+                    dojoHtml.set(this.input3, "");
+                    dojoHtml.set(this.input4, "");
+                    dojoHtml.set(this.input5, "");
+                    break;
+                case 3:
+                    dojoHtml.set(this.input1, "*");
+                    dojoHtml.set(this.input2, "*");
+                    dojoHtml.set(this.input3, "*");
+                    dojoHtml.set(this.input4, "");
+                    dojoHtml.set(this.input5, "");
+                    break;
+                case 4:
+                    dojoHtml.set(this.input1, "*");
+                    dojoHtml.set(this.input2, "*");
+                    dojoHtml.set(this.input3, "*");
+                    dojoHtml.set(this.input4, "*");
+                    dojoHtml.set(this.input5, "");
+                    break;
+                case 5:
+                    dojoHtml.set(this.input1, "*");
+                    dojoHtml.set(this.input2, "*");
+                    dojoHtml.set(this.input3, "*");
+                    dojoHtml.set(this.input4, "*");
+                    dojoHtml.set(this.input5, "*");
+                    break;
+                case 0:
+                default:
+                    dojoHtml.set(this.input1, "");
+                    dojoHtml.set(this.input2, "");
+                    dojoHtml.set(this.input3, "");
+                    dojoHtml.set(this.input4, "");
+                    dojoHtml.set(this.input5, "");            
             }
         },
         
@@ -143,14 +222,12 @@ define([
                 key, value); 
         },
         
-        _verifyPin: function(key, check){
-            var result = false;
+        _verifyPin: function(key, check, callback){
             this._store.get(
-                function(value){ console.log('verified'); if(value === check){ result = true; }},
+                function(value){ console.log('verified'); callback(value === check)},
                 function(error){ console.log('error' + error);},
                 key);
             
-            return result; 
         }
 
 
