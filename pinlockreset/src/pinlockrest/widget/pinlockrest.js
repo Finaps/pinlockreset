@@ -193,7 +193,6 @@ define([
                     dojoHtml.set(this.input4, "*");
                     dojoHtml.set(this.input5, "*");
                     break;
-                case 0:
                 default:
                     dojoHtml.set(this.input1, "");
                     dojoHtml.set(this.input2, "");
