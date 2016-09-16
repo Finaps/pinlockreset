@@ -34,13 +34,14 @@ define([
     "dojo/_base/lang",
     "dojo/text",
     "dojo/on",
+    "dojo/dom-attr",
     "dojo/query",
     "dojo/html",
     "dojo/_base/event",
 
     "pinlockrest/lib/jquery-1.11.2",
     "dojo/text!pinlockrest/widget/template/pinlockrest.html"
-], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, dojoLang, dojoText, dojoOn, dojoQuery, dojoHtml, dojoEvent, _jQuery, widgetTemplate) {
+], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, dojoLang, dojoText, dojoOn, dojoDomAttr, dojoQuery, dojoHtml, dojoEvent, _jQuery, widgetTemplate) {
     "use strict";
 
     var $ = _jQuery.noConflict(true);
@@ -126,13 +127,13 @@ define([
         },
         
         _removeLastDigit: function(){
-          this._currentInput = this._currentInput.slice(0,-1); //remove last char from string - this is fine as well if empty.   
-            //todo update ui. 
+            this._currentInput = this._currentInput.slice(0,-1); //remove last char from string - this is fine as well if empty.   
+            this._inputState(); //update ui.  
         },
         
         _numberButtonPress: function(number){
             if(!/^[0-9]{1}/.test(number)){
-                return; 
+                return; //prevent any strange values. 
             }
             this._currentInput = this._currentInput + number; 
             this._verifyInput(); 
@@ -150,61 +151,70 @@ define([
                 else{
                     this._verifyPin(this._pinLocation, this._currentInput, dojoLang.hitch(this, function(result){
                         this._pinVerified = result; 
-                        dojoHtml.set(this.infoTextNode, "Pin Verified"); 
-                        dojoHtml.set(this.commandText, "Enter new pin");
+                        if(this._pinVerified){
+                            dojoHtml.set(this.infoTextNode, "Pin Verified"); 
+                            dojoHtml.set(this.commandText, "Enter new pin");
+                        }
+                        else{
+                            dojoHtml.set(this.infoTextNode, "Pin Incorrect!"); 
+                            dojoHtml.set(this.commandText, "Try again, Enter your pin");
+                        }
                     }));
                     this._resetInput(); 
                 }
             }
             
+            this._inputState(); //update ui. 
+        },
+        
+        _inputState : function(){
             switch(this._currentInput.length){
                 case 1:
-                    dojoHtml.set(this.input1, "*");
-                    dojoHtml.set(this.input2, "");
-                    dojoHtml.set(this.input3, "");
-                    dojoHtml.set(this.input4, "");
-                    dojoHtml.set(this.input5, "");
+                    dojoDomAttr.set(this.input1, "value", "*");
+                    dojoDomAttr.set(this.input2, "value", "");
+                    dojoDomAttr.set(this.input3, "value", "");
+                    dojoDomAttr.set(this.input4, "value", "");
+                    dojoDomAttr.set(this.input5, "value", "");
                     break;
                 case 2:
-                    dojoHtml.set(this.input1, "*");
-                    dojoHtml.set(this.input2, "*");
-                    dojoHtml.set(this.input3, "");
-                    dojoHtml.set(this.input4, "");
-                    dojoHtml.set(this.input5, "");
+                    dojoDomAttr.set(this.input1, "value", "*");
+                    dojoDomAttr.set(this.input2, "value", "*");
+                    dojoDomAttr.set(this.input3, "value", "");
+                    dojoDomAttr.set(this.input4, "value", "");
+                    dojoDomAttr.set(this.input5, "value", "");
                     break;
                 case 3:
-                    dojoHtml.set(this.input1, "*");
-                    dojoHtml.set(this.input2, "*");
-                    dojoHtml.set(this.input3, "*");
-                    dojoHtml.set(this.input4, "");
-                    dojoHtml.set(this.input5, "");
+                    dojoDomAttr.set(this.input1, "value", "*");
+                    dojoDomAttr.set(this.input2, "value", "*");
+                    dojoDomAttr.set(this.input3, "value", "*");
+                    dojoDomAttr.set(this.input4, "value", "");
+                    dojoDomAttr.set(this.input5, "value", "");
                     break;
                 case 4:
-                    dojoHtml.set(this.input1, "*");
-                    dojoHtml.set(this.input2, "*");
-                    dojoHtml.set(this.input3, "*");
-                    dojoHtml.set(this.input4, "*");
-                    dojoHtml.set(this.input5, "");
+                    dojoDomAttr.set(this.input1, "value", "*");
+                    dojoDomAttr.set(this.input2, "value", "*");
+                    dojoDomAttr.set(this.input3, "value", "*");
+                    dojoDomAttr.set(this.input4, "value", "*");
+                    dojoDomAttr.set(this.input5, "value", "");
                     break;
                 case 5:
-                    dojoHtml.set(this.input1, "*");
-                    dojoHtml.set(this.input2, "*");
-                    dojoHtml.set(this.input3, "*");
-                    dojoHtml.set(this.input4, "*");
-                    dojoHtml.set(this.input5, "*");
+                    dojoDomAttr.set(this.input1, "value", "*");
+                    dojoDomAttr.set(this.input2, "value", "*");
+                    dojoDomAttr.set(this.input3, "value", "*");
+                    dojoDomAttr.set(this.input4, "value", "*");
+                    dojoDomAttr.set(this.input5, "value", "*");
                     break;
                 default:
-                    dojoHtml.set(this.input1, "");
-                    dojoHtml.set(this.input2, "");
-                    dojoHtml.set(this.input3, "");
-                    dojoHtml.set(this.input4, "");
-                    dojoHtml.set(this.input5, "");            
+                    dojoDomAttr.set(this.input1, "value", "");
+                    dojoDomAttr.set(this.input2, "value", "");
+                    dojoDomAttr.set(this.input3, "value", "");
+                    dojoDomAttr.set(this.input4, "value", "");
+                    dojoDomAttr.set(this.input5, "value", "");            
             }
-        },
+        }, 
         
         _resetInput : function(){
             this._currentInput = ""; 
-            //todo reset layout
         },
         
         _removePin: function(key) {

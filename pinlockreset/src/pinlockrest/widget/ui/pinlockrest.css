@@ -1,17 +1,90 @@
-.pinlockrest {
-    
-}
+.pinlockrest {}
 
-.pinlockrest-message {
-
-}
+.pinlockrest-message {}
 
 .input-group-addon {
-    clear: both;
-    padding: 2px 6px;
+  clear: both;
+  padding: 2px 6px;
 }
 
 .pinlockrest-infoTextNode {
-    padding: 0.8em 1em;
-    margin-top: 10px;
+  padding: 0.8em 1em;
+  margin-top: 10px;
+}
+
+.pinlockrest .pinlockrest-title {
+  font-weight: bold;
+  font-size: 1.1em;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.pinlockrest-formgroup {
+  margin: 20px 0;
+}
+
+.pinlockrest-formgroup-input {
+  font-size: 16px;
+  display: block;
+  padding: 15px 10px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.pinlockrest-formgroup-input:focus,
+.pinlockrest-formgroup-input.active {
+  outline: none;
+  color: #555;
+  border-color: #0595db;
+}
+
+.pinlockrest-formgroup-pins .pinlockrest-formgroup-input {
+  font-size: 31px;
+  padding: 6px 10px;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  text-align: center;
+  display: inline-block;
+  margin: 5px;
+}
+
+.pinlockrest-formgroup-pins {
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+.pinlockrest-formgroup-pins .pinlockrest-formgroup-input:first-child {
+  margin-left: 0;
+}
+
+.pinlockrest-formgroup-pins .pinlockrest-formgroup-input:last-child {
+  margin-right: 0;
+}
+
+.pinlockrest .row {
+  display: table;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.pinlockrest [class*="col-"] {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  float: none;
+}
+
+.pinlockrest .btn-default {
+  padding: 11px 18px;
+  width: 70px;
+  height: 70px;
+  margin-bottom: 10px;
+  font-size: 25px;
+  line-height: 50px;
+  border-radius: 100%;
+  opacity: 0.5;
+  outline: 0;
 }

@@ -1,25 +1,67 @@
 <div class="pinlockrest">
-    <div data-dojo-attach-point="commandText">Enter your pin</div>
-        <div>
-            <div data-dojo-attach-point="input1"></div>
-            <div data-dojo-attach-point="input2"></div>
-            <div data-dojo-attach-point="input3"></div>
-            <div data-dojo-attach-point="input4"></div>
-            <div data-dojo-attach-point="input5"></div>
-        </div>
-        <div class="input-group" data-dojo-attach-point="inputNodes">
-            <button class="numButtons" value="1">1</button>
-            <button class="numButtons" value="2">2</button>
-            <button class="numButtons" value="3">3</button>
-            <button class="numButtons" value="4">4</button>
-            <button class="numButtons" value="5">5</button>
-            <button class="numButtons" value="6">6</button>
-            <button class="numButtons" value="7">7</button>
-            <button class="numButtons" value="8">8</button>
-            <button class="numButtons" value="9">9</button>
-            <button data-dojo-attach-point="del" >del</button>
-        </div>
-    
-    <div class="pinlockrest-infoTextNode" data-dojo-attach-point="infoTextNode" />
-</div>
+  <div class="pinlockrest-title" data-dojo-attach-point="commandText">
+    <span>Enter your pin</span>
+  </div>
 
+  <div class="pinlockrest-formgroup pinlockrest-formgroup-pins">
+    <input data-dojo-attach-point="input1" placeholder="*" class="pinlockrest-formgroup-input" type="password" autocorrect="off" autocapitalize="none" maxlength="1">
+    <input data-dojo-attach-point="input2" placeholder="*" class="pinlockrest-formgroup-input" type="password" autocorrect="off" autocapitalize="none" maxlength="1">
+    <input data-dojo-attach-point="input3" placeholder="*" class="pinlockrest-formgroup-input" type="password" autocorrect="off" autocapitalize="none" maxlength="1">
+    <input data-dojo-attach-point="input4" placeholder="*" class="pinlockrest-formgroup-input" type="password" autocorrect="off" autocapitalize="none" maxlength="1">
+    <input data-dojo-attach-point="input5" placeholder="*" class="pinlockrest-formgroup-input" type="password" autocorrect="off" autocapitalize="none" maxlength="1">
+  </div>
+
+  <div data-dojo-attach-point="inputNodes">
+    <div class="row">
+      <div class="col-xs-4">
+        <button type="button" class="btn mx-button numButtons btn-default" value="1">1</button>
+      </div>
+      <div class="col-xs-4">
+        <button type="button" class="btn mx-button numButtons btn-default" value="2">2</button>
+      </div>
+      <div class="col-xs-4">
+        <button type="button" class="btn mx-button numButtons btn-default" value="3">3</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-4">
+        <button type="button" class="btn mx-button numButtons btn-default" value="4">4</button>
+      </div>
+      <div class="col-xs-4">
+        <button type="button" class="btn mx-button numButtons btn-default" value="5">5</button>
+      </div>
+      <div class="col-xs-4">
+        <button type="button" class="btn mx-button numButtons btn-default" value="6">6</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-4">
+        <button type="button" class="btn mx-button numButtons btn-default" value="7">7</button>
+      </div>
+      <div class="col-xs-4">
+        <button type="button" class="btn mx-button numButtons btn-default" value="8">8</button>
+      </div>
+      <div class="col-xs-4">
+        <button type="button" class="btn mx-button numButtons btn-default" value="9">9</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-4">
+
+      </div>
+      <div class="col-xs-4">
+        <button type="button" class="btn mx-button numButtons btn-default" value="0">0</button>
+      </div>
+      <div class="col-xs-4">
+        <span class="mx-link" tabindex="0" data-dojo-attach-point="del"> 
+          <a tabindex="-1">delete</a> 
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="pinlockrest-infoTextNode" data-dojo-attach-point="infoTextNode" />
+</div>
