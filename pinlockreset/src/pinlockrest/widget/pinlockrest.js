@@ -80,7 +80,7 @@ define([
         // dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
         postCreate: function () {
             logger.debug(this.id + ".postCreate");
-            this._lockState = this._lockStateEnum.READY, //default state
+            this._lockState = this._lockStateEnum.READY; //default state
             var storeId = this.appId; 
             
             //use appId to find the store location on the device. 
