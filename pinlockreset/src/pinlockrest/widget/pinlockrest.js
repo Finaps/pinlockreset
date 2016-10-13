@@ -67,8 +67,10 @@ define([
         
         _store: null,
         _currentInput: "",
-        _pinVerified: false, 
         _pinLocation: 'pin', //default location
+        _pinToCheck: null, 
+        _lockStateEnum: {READY : 0, CHANGE : 1, CONFIRM : 2},
+        _lockState: this._lockStateEnum.READY, //default state
 
         // dojo.declare.constructor is called to construct the widget instance. Implement to initialize non-primitive properties.
         constructor: function () {
@@ -141,29 +143,48 @@ define([
         
         _verifyInput : function(){
             if(this._currentInput.length === 5){
-                if(this._pinVerified){
-                    this._setPin(this._pinLocation, this._currentInput);
-                    this._pinVerified = false; //reset state. 
-                    this._resetInput(); 
-                    dojoHtml.set(this.infoTextNode, "Pin has been changed"); 
-                    dojoHtml.set(this.commandText, "Enter your pin");
-                }
-                else{
-                    this._verifyPin(this._pinLocation, this._currentInput, dojoLang.hitch(this, function(result){
-                        this._pinVerified = result; 
-                        if(this._pinVerified){
-                            dojoHtml.set(this.infoTextNode, "Pin Verified"); 
+                switch(this._lockState){
+                    case this._lockStateEnum.READY:
+                        //check pin before allowing change
+                        this._verifyPin(this._pinLocation, this._currentInput, dojoLang.hitch(this, function(result){
+                            if(result){
+                                dojoHtml.set(this.infoTextNode, "Pin Verified"); 
+                                dojoHtml.set(this.commandText, "Enter new pin");
+                                this._lockState = this._lockStateEnum.CHANGE; //update lock state
+                            }
+                            else{
+                                dojoHtml.set(this.infoTextNode, "Pin Incorrect!"); 
+                                dojoHtml.set(this.commandText, "Try again, Enter your pin");
+                            }
+                        }));
+                        break;
+                    case this._lockStateEnum.CHANGE:
+                        // temp store new key.
+                        this._pinToCheck = this._currentInput;  
+                        this._lockState = this._lockStateEnum.CONFIRM; 
+                        this._resetInput(); 
+                        dojoHtml.set(this.infoTextNode, "Verify new pin"); 
+                        dojoHtml.set(this.commandText, "Re-enter new pin");
+                        break;
+                    case this._lockStateEnum.CONFIRM:
+                        //check new key matches with confirmation.
+                        if(this._pinToCheck === this._currentInput){ //new pin successful 
+                            this._setPin(this._pinLocation, this._currentInput); //set the new pin
+                            this._lockState = this._lockStateEnum.READY;
+                            dojoHtml.set(this.infoTextNode, "Pin has been changed"); 
+                            dojoHtml.set(this.commandText, "Enter your pin");
+                        }
+                        else{ //pins didn't match
+                            this._lockState = this._lockStateEnum.CHANGE; 
+                            dojoHtml.set(this.infoTextNode, "Pin did not match"); 
                             dojoHtml.set(this.commandText, "Enter new pin");
                         }
-                        else{
-                            dojoHtml.set(this.infoTextNode, "Pin Incorrect!"); 
-                            dojoHtml.set(this.commandText, "Try again, Enter your pin");
-                        }
-                    }));
-                    this._resetInput(); 
+                        this._resetInput(); 
+                        this._pinToCheck = ""; 
+                        break; 
                 }
             }
-            
+                       
             this._inputState(); //update ui. 
         },
         
