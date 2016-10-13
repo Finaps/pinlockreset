@@ -163,7 +163,6 @@ define([
                         // temp store new key.
                         this._pinToCheck = this._currentInput;  
                         this._lockState = this._lockStateEnum.CONFIRM; 
-                        this._resetInput(); 
                         dojoHtml.set(this.infoTextNode, "Verify new pin"); 
                         dojoHtml.set(this.commandText, "Re-enter new pin");
                         break;
@@ -180,10 +179,10 @@ define([
                             dojoHtml.set(this.infoTextNode, "Pin did not match"); 
                             dojoHtml.set(this.commandText, "Enter new pin");
                         }
-                        this._resetInput(); 
                         this._pinToCheck = ""; 
                         break; 
                 }
+                this._resetInput(); 
             }
                        
             this._inputState(); //update ui. 
