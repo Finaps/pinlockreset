@@ -70,7 +70,7 @@ define([
         _pinLocation: 'pin', //default location
         _pinToCheck: null, 
         _lockStateEnum: {READY : 0, CHANGE : 1, CONFIRM : 2},
-        _lockState: this._lockStateEnum.READY, //default state
+        _lockState: null,
 
         // dojo.declare.constructor is called to construct the widget instance. Implement to initialize non-primitive properties.
         constructor: function () {
@@ -80,6 +80,7 @@ define([
         // dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
         postCreate: function () {
             logger.debug(this.id + ".postCreate");
+            this._lockState = this._lockStateEnum.READY, //default state
             var storeId = this.appId; 
             
             //use appId to find the store location on the device. 
