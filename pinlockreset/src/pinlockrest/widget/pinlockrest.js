@@ -155,7 +155,7 @@ define([
                             }
                             else{
                                 dojoHtml.set(this.infoTextNode, "Pin Incorrect!"); 
-                                dojoHtml.set(this.commandText, "Try again, Enter your pin");
+                                dojoHtml.set(this.commandText, "Mobiele pincode onjuist");
                             }
                         }));
                         break;
@@ -164,7 +164,7 @@ define([
                         this._pinToCheck = this._currentInput;  
                         this._lockState = this._lockStateEnum.CONFIRM; 
                         dojoHtml.set(this.infoTextNode, "Verify new pin"); 
-                        dojoHtml.set(this.commandText, "Re-enter new pin");
+                        dojoHtml.set(this.commandText, "Bevestig uw nieuwe mobiele pincode");
                         break;
                     case this._lockStateEnum.CONFIRM:
                         //check new key matches with confirmation.
@@ -172,12 +172,12 @@ define([
                             this._setPin(this._pinLocation, this._currentInput); //set the new pin
                             this._lockState = this._lockStateEnum.READY;
                             dojoHtml.set(this.infoTextNode, "Pin has been changed"); 
-                            dojoHtml.set(this.commandText, "Enter your pin");
+                            dojoHtml.set(this.commandText, "Vul uw huidige mobiele pincode in");
                         }
                         else{ //pins didn't match
                             this._lockState = this._lockStateEnum.CHANGE; 
                             dojoHtml.set(this.infoTextNode, "Pin did not match"); 
-                            dojoHtml.set(this.commandText, "Enter new pin");
+                            dojoHtml.set(this.commandText, "Vul uw nieuwe mobiele pincode in");
                         }
                         this._pinToCheck = ""; 
                         break; 
