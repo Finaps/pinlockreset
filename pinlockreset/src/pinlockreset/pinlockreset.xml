@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<widget id="pinlockrest.widget.pinlockrest" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
-    <name>pinlockrest</name>
+<widget id="pinlockreset.widget.pinlockreset" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
+    <name>pinlockreset</name>
     <description>Rest or change the pin of a mendix app within the app.</description>
 
     <icon />
