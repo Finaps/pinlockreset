@@ -64,7 +64,9 @@ define([
 
         // Parameters configured in the Modeler.
         appId: null, 
+        mfOnFinish: null,
         
+        //internal vars
         _store: null,
         _currentInput: "",
         _pinLocation: 'pin', //default location
@@ -173,6 +175,19 @@ define([
                             this._lockState = this._lockStateEnum.READY;
                             dojoHtml.set(this.infoTextNode, "Pin has been changed"); 
                             dojoHtml.set(this.commandText, "Enter your pin");
+                            //call success MF
+                            mx.data.action({
+                                params: {
+                                    actionname: this.mfOnFinish
+                                },
+                                callback: function(obj) {
+                                    //should be empty.. 
+                                    logger.debug("new pin successful.");
+                                },
+                                error: function(error) {
+                                    logger.debug(error);
+                                }
+                            });
                         }
                         else{ //pins didn't match
                             this._lockState = this._lockStateEnum.CHANGE; 
