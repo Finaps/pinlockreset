@@ -231,7 +231,7 @@ define([
                         //call failure action
                         mx.data.action({
                             params: {
-                                actionname: this.mfOnFinish
+                                actionname: this.mfOnFailure
                             },
                             callback: function(obj) {
                                 //should be empty.. 

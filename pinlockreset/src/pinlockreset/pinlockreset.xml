@@ -19,7 +19,7 @@
             <returnType type="Void" />
         </property>
         
-        <property key="limit" type="integer" required="true">
+        <property key="limit" type="integer" required="true" defaultValue="3">
             <caption>Fail Limit</caption>
             <category>Behavior</category>
             <description>The amount of wrong entries before Microflow On Fail is called.</description>
