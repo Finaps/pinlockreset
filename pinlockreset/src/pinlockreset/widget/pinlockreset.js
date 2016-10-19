@@ -1,9 +1,9 @@
 /*global logger*/
 /*
-    pinlockrest
+    pinlockreset
     ========================
 
-    @file      : pinlockrest.js
+    @file      : pinlockreset.js
     @version   : 1
     @author    : Simon Martyr (@vintage_si)
     @date      : Thu, 08 Sep 2016 11:37:32 GMT
@@ -39,15 +39,15 @@ define([
     "dojo/html",
     "dojo/_base/event",
 
-    "pinlockrest/lib/jquery-1.11.2",
-    "dojo/text!pinlockrest/widget/template/pinlockrest.html"
+    "pinlockreset/lib/jquery-1.11.2",
+    "dojo/text!pinlockreset/widget/template/pinlockreset.html"
 ], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, dojoLang, dojoText, dojoOn, dojoDomAttr, dojoQuery, dojoHtml, dojoEvent, _jQuery, widgetTemplate) {
     "use strict";
 
     var $ = _jQuery.noConflict(true);
 
     // Declare widget's prototype.
-    return declare("pinlockrest.widget.pinlockrest", [ _WidgetBase, _TemplatedMixin ], {
+    return declare("pinlockreset.widget.pinlockreset", [ _WidgetBase, _TemplatedMixin ], {
         // _TemplatedMixin will create our dom node using this HTML template.
         templateString: widgetTemplate,
 
@@ -279,4 +279,4 @@ define([
     });
 });
 
-require(["pinlockrest/widget/pinlockrest"]);
+require(["pinlockreset/widget/pinlockreset"]);

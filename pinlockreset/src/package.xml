@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <package xmlns="http://www.mendix.com/package/1.0/">
-    <clientModule name="pinlockrest" version="1" xmlns="http://www.mendix.com/clientModule/1.0/">
+    <clientModule name="pinlockreset" version="1" xmlns="http://www.mendix.com/clientModule/1.0/">
         <widgetFiles>
-            <widgetFile path="pinlockrest/pinlockrest.xml" />
+            <widgetFile path="pinlockreset/pinlockreset.xml" />
         </widgetFiles>
         <files>
-            <file path="pinlockrest/widget/" />
+            <file path="pinlockreset/widget/" />
         </files>
     </clientModule>
 </package>
