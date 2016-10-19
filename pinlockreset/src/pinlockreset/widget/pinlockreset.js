@@ -39,12 +39,10 @@ define([
     "dojo/html",
     "dojo/_base/event",
 
-    "pinlockreset/lib/jquery-1.11.2",
     "dojo/text!pinlockreset/widget/template/pinlockreset.html"
-], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, dojoLang, dojoText, dojoOn, dojoDomAttr, dojoQuery, dojoHtml, dojoEvent, _jQuery, widgetTemplate) {
+], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, dojoLang, dojoText, dojoOn, dojoDomAttr, dojoQuery, dojoHtml, dojoEvent, widgetTemplate) {
     "use strict";
 
-    var $ = _jQuery.noConflict(true);
 
     // Declare widget's prototype.
     return declare("pinlockreset.widget.pinlockreset", [ _WidgetBase, _TemplatedMixin ], {
@@ -65,6 +63,8 @@ define([
         // Parameters configured in the Modeler.
         appId: null, 
         mfOnFinish: null,
+        mfOnFailure: null, 
+        limit: null, 
         
         //internal vars
         _store: null,
@@ -73,6 +73,7 @@ define([
         _pinToCheck: null, 
         _lockStateEnum: {READY : 0, CHANGE : 1, CONFIRM : 2},
         _lockState: null,
+        _failCount: 0,
 
         // dojo.declare.constructor is called to construct the widget instance. Implement to initialize non-primitive properties.
         constructor: function () {
@@ -151,6 +152,7 @@ define([
                         //check pin before allowing change
                         this._verifyPin(this._pinLocation, this._currentInput, dojoLang.hitch(this, function(result){
                             if(result){
+                                this._failCount = 0; //reset failure count. 
                                 dojoHtml.set(this.infoTextNode, "Pin Verified"); 
                                 dojoHtml.set(this.commandText, "Enter new pin");
                                 this._lockState = this._lockStateEnum.CHANGE; //update lock state
@@ -158,6 +160,23 @@ define([
                             else{
                                 dojoHtml.set(this.infoTextNode, "Pin Incorrect!"); 
                                 dojoHtml.set(this.commandText, "Try again, Enter your pin");
+                                this._failCount++; 
+                                //TODO add the text to inform about failure limit etc. 
+                                if(this._failCount >= this.limit){
+                                    //call failure action
+                                    mx.data.action({
+                                        params: {
+                                            actionname: this.mfOnFinish
+                                        },
+                                        callback: function(obj) {
+                                            //should be empty.. 
+                                            logger.debug("new pin successful.");
+                                        },
+                                        error: function(error) {
+                                            logger.debug(error);
+                                        }
+                                    });
+                                }
                             }
                         }));
                         break;

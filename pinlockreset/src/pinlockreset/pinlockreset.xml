@@ -18,6 +18,19 @@
             <description>The microflow to execute on success.</description>
             <returnType type="Void" />
         </property>
+        
+        <property key="limit" type="integer" required="true">
+            <caption>Fail Limit</caption>
+            <category>Behavior</category>
+            <description>The amount of wrong entries before Microflow On Fail is called.</description>
+        </property>
+        
+        <property key="mfOnFailure" type="microflow" required="true">
+            <caption>Microflow On Fail</caption>
+            <category>Behavior</category>
+            <description>The microflow to execute when the limit of failed entries has been reached.</description>
+            <returnType type="Void" />
+        </property>
     </properties>
 </widget>
 
