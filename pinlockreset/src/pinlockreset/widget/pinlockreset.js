@@ -65,6 +65,7 @@ define([
         mfOnFinish: null,
         mfOnFailure: null, 
         limit: null, 
+        banList: null, 
         
         //internal vars
         _store: null,
@@ -246,11 +247,18 @@ define([
             }));
         },
         
-        _changePin: function(){                        
-            this._pinToCheck = this._currentInput;  
-            this._lockState = this._lockStateEnum.CONFIRM; 
-            dojoHtml.set(this.infoTextNode, "Verify new pin"); 
-            dojoHtml.set(this.commandText, "Re-enter new pin");
+        _changePin: function(){    
+            if(this._checkBanList(this._currentInput)){
+                dojoHtml.set(this.infoTextNode, "Pin not allowed, please try again"); 
+                dojoHtml.set(this.commandText, "Enter new pin");
+            }
+            else{
+                this._pinToCheck = this._currentInput;  
+                this._lockState = this._lockStateEnum.CONFIRM; 
+                dojoHtml.set(this.infoTextNode, "Verify new pin"); 
+                dojoHtml.set(this.commandText, "Re-enter new pin");
+            }
+
         },
         
         _confirmPin: function(){
@@ -280,6 +288,15 @@ define([
             }
             this._pinToCheck = ""; 
         },
+        
+        _checkBanList : function(value){
+            for(var obj in this.banlist){
+                if(this.banlist[obj].pin === value){
+                    return true; 
+                }
+            }
+            return false; 
+        }, 
         
         _resetInput : function(){
             this._currentInput = ""; 

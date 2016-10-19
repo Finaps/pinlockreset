@@ -11,6 +11,20 @@
             <category>Behavior</category>
             <description>The Mobile App Id example: com.mendix.app</description>
         </property>
+        
+        <property key="banlist" type="object" isList="true" required="false">
+         <caption>Pins which can't be entered</caption>
+         <category>Behavior</category>
+         <description>Collection of pins you wish users not to use</description> 
+         <properties>
+            <!-- Define the sub-properties here -->
+            <property key="pin" type="string">
+             <caption>Pin</caption>
+             <category>Data source</category>
+             <description>5 digit number</description>
+            </property>
+         </properties>
+        </property>
 
         <property key="mfOnFinish" type="microflow" required="false">
             <caption>Microflow On Success</caption>
