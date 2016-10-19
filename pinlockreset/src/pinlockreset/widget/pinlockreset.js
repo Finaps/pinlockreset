@@ -146,80 +146,26 @@ define([
         },
         
         _verifyInput : function(){
+            this._inputState(); //update ui.
+            
             if(this._currentInput.length === 5){
                 switch(this._lockState){
                     case this._lockStateEnum.READY:
                         //check pin before allowing change
-                        this._verifyPin(this._pinLocation, this._currentInput, dojoLang.hitch(this, function(result){
-                            if(result){
-                                this._failCount = 0; //reset failure count. 
-                                dojoHtml.set(this.infoTextNode, "Pin Verified"); 
-                                dojoHtml.set(this.commandText, "Enter new pin");
-                                this._lockState = this._lockStateEnum.CHANGE; //update lock state
-                            }
-                            else{
-                                dojoHtml.set(this.infoTextNode, "Pin Incorrect!"); 
-                                dojoHtml.set(this.commandText, "Try again, Enter your pin");
-                                this._failCount++; 
-                                //TODO add the text to inform about failure limit etc. 
-                                if(this._failCount >= this.limit){
-                                    //call failure action
-                                    mx.data.action({
-                                        params: {
-                                            actionname: this.mfOnFinish
-                                        },
-                                        callback: function(obj) {
-                                            //should be empty.. 
-                                            logger.debug("new pin successful.");
-                                        },
-                                        error: function(error) {
-                                            logger.debug(error);
-                                        }
-                                    });
-                                }
-                            }
-                        }));
+                        this._checkPin(); 
                         break;
                     case this._lockStateEnum.CHANGE:
                         // temp store new key.
-                        this._pinToCheck = this._currentInput;  
-                        this._lockState = this._lockStateEnum.CONFIRM; 
-                        dojoHtml.set(this.infoTextNode, "Verify new pin"); 
-                        dojoHtml.set(this.commandText, "Re-enter new pin");
+                        this._changePin(); 
                         break;
                     case this._lockStateEnum.CONFIRM:
                         //check new key matches with confirmation.
-                        if(this._pinToCheck === this._currentInput){ //new pin successful 
-                            this._setPin(this._pinLocation, this._currentInput); //set the new pin
-                            this._lockState = this._lockStateEnum.READY;
-                            dojoHtml.set(this.infoTextNode, "Pin has been changed"); 
-                            dojoHtml.set(this.commandText, "Enter your pin");
-                            //call success MF
-                            mx.data.action({
-                                params: {
-                                    actionname: this.mfOnFinish
-                                },
-                                callback: function(obj) {
-                                    //should be empty.. 
-                                    logger.debug("new pin successful.");
-                                },
-                                error: function(error) {
-                                    logger.debug(error);
-                                }
-                            });
-                        }
-                        else{ //pins didn't match
-                            this._lockState = this._lockStateEnum.CHANGE; 
-                            dojoHtml.set(this.infoTextNode, "Pin did not match"); 
-                            dojoHtml.set(this.commandText, "Enter new pin");
-                        }
-                        this._pinToCheck = ""; 
+                        this._confirmPin(); 
                         break; 
                 }
                 this._resetInput(); 
             }
                        
-            this._inputState(); //update ui. 
         },
         
         _inputState : function(){
@@ -267,6 +213,73 @@ define([
                     dojoDomAttr.set(this.input5, "value", "");            
             }
         }, 
+        
+        _checkPin: function(){
+            this._verifyPin(this._pinLocation, this._currentInput, dojoLang.hitch(this, function(result){
+                if(result){
+                    this._failCount = 0; //reset failure count. 
+                    dojoHtml.set(this.infoTextNode, "Pin Verified"); 
+                    dojoHtml.set(this.commandText, "Enter new pin");
+                    this._lockState = this._lockStateEnum.CHANGE; //update lock state
+                }
+                else{
+                    dojoHtml.set(this.infoTextNode, "Pin Incorrect!"); 
+                    dojoHtml.set(this.commandText, "Try again, Enter your pin");
+                    this._failCount++; 
+                    //TODO add the text to inform about failure limit etc. 
+                    if(this._failCount >= this.limit){
+                        //call failure action
+                        mx.data.action({
+                            params: {
+                                actionname: this.mfOnFinish
+                            },
+                            callback: function(obj) {
+                                //should be empty.. 
+                                logger.debug("new pin successful.");
+                            },
+                            error: function(error) {
+                                logger.debug(error);
+                            }
+                        });
+                    }
+                }
+            }));
+        },
+        
+        _changePin: function(){                        
+            this._pinToCheck = this._currentInput;  
+            this._lockState = this._lockStateEnum.CONFIRM; 
+            dojoHtml.set(this.infoTextNode, "Verify new pin"); 
+            dojoHtml.set(this.commandText, "Re-enter new pin");
+        },
+        
+        _confirmPin: function(){
+            if(this._pinToCheck === this._currentInput){ //new pin successful 
+                this._setPin(this._pinLocation, this._currentInput); //set the new pin
+                this._lockState = this._lockStateEnum.READY;
+                dojoHtml.set(this.infoTextNode, "Pin has been changed"); 
+                dojoHtml.set(this.commandText, "Enter your pin");
+                //call success MF
+                mx.data.action({
+                    params: {
+                        actionname: this.mfOnFinish
+                    },
+                    callback: function(obj) {
+                        //should be empty.. 
+                        logger.debug("new pin successful.");
+                    },
+                    error: function(error) {
+                        logger.debug(error);
+                    }
+                });
+            }
+            else{ //pins didn't match
+                this._lockState = this._lockStateEnum.CHANGE; 
+                dojoHtml.set(this.infoTextNode, "Pin did not match"); 
+                dojoHtml.set(this.commandText, "Enter new pin");
+            }
+            this._pinToCheck = ""; 
+        },
         
         _resetInput : function(){
             this._currentInput = ""; 
