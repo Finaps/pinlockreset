@@ -1,9 +1,9 @@
 /*global logger*/
 /*
-    pinlockreset
+    pinlockrest
     ========================
 
-    @file      : pinlockreset.js
+    @file      : pinlockrest.js
     @version   : 1
     @author    : Simon Martyr (@vintage_si)
     @date      : Thu, 08 Sep 2016 11:37:32 GMT
@@ -39,15 +39,15 @@ define([
     "dojo/html",
     "dojo/_base/event",
 
-    "pinlockreset/lib/jquery-1.11.2",
-    "dojo/text!pinlockreset/widget/template/pinlockreset.html"
+    "pinlockrest/lib/jquery-1.11.2",
+    "dojo/text!pinlockrest/widget/template/pinlockrest.html"
 ], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, dojoLang, dojoText, dojoOn, dojoDomAttr, dojoQuery, dojoHtml, dojoEvent, _jQuery, widgetTemplate) {
     "use strict";
 
     var $ = _jQuery.noConflict(true);
 
     // Declare widget's prototype.
-    return declare("pinlockreset.widget.pinlockreset", [ _WidgetBase, _TemplatedMixin ], {
+    return declare("pinlockrest.widget.pinlockrest", [ _WidgetBase, _TemplatedMixin ], {
         // _TemplatedMixin will create our dom node using this HTML template.
         templateString: widgetTemplate,
 
@@ -64,7 +64,9 @@ define([
 
         // Parameters configured in the Modeler.
         appId: null, 
+        mfOnFinish: null,
         
+        //internal vars
         _store: null,
         _currentInput: "",
         _pinLocation: 'pin', //default location
@@ -155,7 +157,7 @@ define([
                             }
                             else{
                                 dojoHtml.set(this.infoTextNode, "Pin Incorrect!"); 
-                                dojoHtml.set(this.commandText, "Mobiele pincode onjuist");
+                                dojoHtml.set(this.commandText, "Try again, Enter your pin");
                             }
                         }));
                         break;
@@ -164,7 +166,7 @@ define([
                         this._pinToCheck = this._currentInput;  
                         this._lockState = this._lockStateEnum.CONFIRM; 
                         dojoHtml.set(this.infoTextNode, "Verify new pin"); 
-                        dojoHtml.set(this.commandText, "Bevestig uw nieuwe mobiele pincode");
+                        dojoHtml.set(this.commandText, "Re-enter new pin");
                         break;
                     case this._lockStateEnum.CONFIRM:
                         //check new key matches with confirmation.
@@ -172,12 +174,25 @@ define([
                             this._setPin(this._pinLocation, this._currentInput); //set the new pin
                             this._lockState = this._lockStateEnum.READY;
                             dojoHtml.set(this.infoTextNode, "Pin has been changed"); 
-                            dojoHtml.set(this.commandText, "Vul uw huidige mobiele pincode in");
+                            dojoHtml.set(this.commandText, "Enter your pin");
+                            //call success MF
+                            mx.data.action({
+                                params: {
+                                    actionname: this.mfOnFinish
+                                },
+                                callback: function(obj) {
+                                    //should be empty.. 
+                                    logger.debug("new pin successful.");
+                                },
+                                error: function(error) {
+                                    logger.debug(error);
+                                }
+                            });
                         }
                         else{ //pins didn't match
                             this._lockState = this._lockStateEnum.CHANGE; 
                             dojoHtml.set(this.infoTextNode, "Pin did not match"); 
-                            dojoHtml.set(this.commandText, "Vul uw nieuwe mobiele pincode in");
+                            dojoHtml.set(this.commandText, "Enter new pin");
                         }
                         this._pinToCheck = ""; 
                         break; 
@@ -264,4 +279,4 @@ define([
     });
 });
 
-require(["pinlockreset/widget/pinlockreset"]);
+require(["pinlockrest/widget/pinlockrest"]);

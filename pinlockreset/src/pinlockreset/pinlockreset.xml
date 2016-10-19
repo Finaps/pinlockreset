@@ -11,6 +11,12 @@
             <category>Behavior</category>
             <description>The Mobile App Id example: com.mendix.app</description>
         </property>
+        
+        <property key="mfOnFinish" type="microflow" required="false">
+            <caption>Microflow On Success</caption>
+            <category>Behavior</category>
+            <description>The microflow to execute on success.</description>
+        </property>
     </properties>
 </widget>
 
