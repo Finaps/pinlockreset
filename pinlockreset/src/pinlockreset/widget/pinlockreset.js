@@ -250,7 +250,7 @@ define([
         _changePin: function(){    
             if(this._checkBanList(this._currentInput)){
                 dojoHtml.set(this.infoTextNode, "Pincode te makkelijk, probeer opnieuw"); 
-                dojoHtml.set(this.commandText, "Voer nieuwe pincode in");
+                dojoHtml.set(this.commandText, "Voer uw nieuwe pincode in");
             }
             else{
                 this._pinToCheck = this._currentInput;  
@@ -266,7 +266,7 @@ define([
                 this._setPin(this._pinLocation, this._currentInput); //set the new pin
                 this._lockState = this._lockStateEnum.READY;
                 dojoHtml.set(this.infoTextNode, "Pincode is gewijzigd"); 
-                dojoHtml.set(this.commandText, "Voer uw pincode in");
+                dojoHtml.set(this.commandText, "Voer uw huidige pincode in");
                 //call success MF
                 mx.data.action({
                     params: {
