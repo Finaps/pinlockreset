@@ -219,13 +219,13 @@ define([
             this._verifyPin(this._pinLocation, this._currentInput, dojoLang.hitch(this, function(result){
                 if(result){
                     this._failCount = 0; //reset failure count. 
-                    dojoHtml.set(this.infoTextNode, "Pin Verified"); 
-                    dojoHtml.set(this.commandText, "Enter new pin");
+                    dojoHtml.set(this.infoTextNode, "Pincode geverifieerd"); 
+                    dojoHtml.set(this.commandText, "Voer nieuwe pincode in");
                     this._lockState = this._lockStateEnum.CHANGE; //update lock state
                 }
                 else{
-                    dojoHtml.set(this.infoTextNode, "Pin Incorrect!"); 
-                    dojoHtml.set(this.commandText, "Try again, Enter your pin");
+                    dojoHtml.set(this.infoTextNode, "Pincode fout"); 
+                    dojoHtml.set(this.commandText, "Probeer opnieuw de pincode in te voeren");
                     this._failCount++; 
                     //TODO add the text to inform about failure limit etc. 
                     if(this._failCount >= this.limit){
@@ -249,14 +249,14 @@ define([
         
         _changePin: function(){    
             if(this._checkBanList(this._currentInput)){
-                dojoHtml.set(this.infoTextNode, "Pin not allowed, please try again"); 
-                dojoHtml.set(this.commandText, "Enter new pin");
+                dojoHtml.set(this.infoTextNode, "Pincode te makkelijk, probeer opnieuw"); 
+                dojoHtml.set(this.commandText, "Voer nieuwe pincode in");
             }
             else{
                 this._pinToCheck = this._currentInput;  
                 this._lockState = this._lockStateEnum.CONFIRM; 
-                dojoHtml.set(this.infoTextNode, "Verify new pin"); 
-                dojoHtml.set(this.commandText, "Re-enter new pin");
+                dojoHtml.set(this.infoTextNode, "Bevestig pincode"); 
+                dojoHtml.set(this.commandText, "Voer uw nieuwe pincode in");
             }
 
         },
@@ -265,8 +265,8 @@ define([
             if(this._pinToCheck === this._currentInput){ //new pin successful 
                 this._setPin(this._pinLocation, this._currentInput); //set the new pin
                 this._lockState = this._lockStateEnum.READY;
-                dojoHtml.set(this.infoTextNode, "Pin has been changed"); 
-                dojoHtml.set(this.commandText, "Enter your pin");
+                dojoHtml.set(this.infoTextNode, "Pincode is gewijzigd"); 
+                dojoHtml.set(this.commandText, "Voer uw pincode in");
                 //call success MF
                 mx.data.action({
                     params: {
@@ -283,8 +283,8 @@ define([
             }
             else{ //pins didn't match
                 this._lockState = this._lockStateEnum.CHANGE; 
-                dojoHtml.set(this.infoTextNode, "Pin did not match"); 
-                dojoHtml.set(this.commandText, "Enter new pin");
+                dojoHtml.set(this.infoTextNode, "Pincode kwam niet overeen"); 
+                dojoHtml.set(this.commandText, "Voer uw pincode in");
             }
             this._pinToCheck = ""; 
         },
