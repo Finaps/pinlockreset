@@ -34,13 +34,14 @@ define([
     "dojo/_base/lang",
     "dojo/text",
     "dojo/on",
+    "dojo/touch",
     "dojo/dom-attr",
     "dojo/query",
     "dojo/html",
     "dojo/_base/event",
 
     "dojo/text!pinlockreset/widget/template/pinlockreset.html"
-], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, dojoLang, dojoText, dojoOn, dojoDomAttr, dojoQuery, dojoHtml, dojoEvent, widgetTemplate) {
+], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, dojoLang, dojoText, dojoOn, dojoTouch, dojoDomAttr, dojoQuery, dojoHtml, dojoEvent, widgetTemplate) {
     "use strict";
 
 
@@ -120,12 +121,12 @@ define([
             
             var nl = dojoQuery(".numButtons", this.inputNodes); //get all the num buttons within this domnode
             
-            dojoOn(nl, "click", dojoLang.hitch(this,function(e){
+            dojoOn(nl, dojoTouch.press, dojoLang.hitch(this,function(e){
                 this._stopBubblingEventOnMobile(e); 
                 this._numberButtonPress(e.currentTarget.value);
             }));
             
-            dojoOn(this.del, "click", dojoLang.hitch(this, function(e){
+            dojoOn(this.del, dojoTouch.press, dojoLang.hitch(this, function(e){
                 this._stopBubblingEventOnMobile(e);
                 this._removeLastDigit(); 
             }));
