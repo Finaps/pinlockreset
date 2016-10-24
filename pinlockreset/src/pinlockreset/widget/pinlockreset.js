@@ -46,34 +46,38 @@ define([
 
 
     // Declare widget's prototype.
-    return declare("pinlockreset.widget.pinlockreset", [ _WidgetBase, _TemplatedMixin ], {
+    return declare("pinlockreset.widget.pinlockreset", [_WidgetBase, _TemplatedMixin], {
         // _TemplatedMixin will create our dom node using this HTML template.
         templateString: widgetTemplate,
 
         // DOM elements
         inputNodes: null,
-        input1: null, 
+        input1: null,
         input2: null,
         input3: null,
-        input4: null, 
-        input5: null, 
-        commandText: null, 
-        infoTextNode: null,
-        del: null, 
+        input4: null,
+        input5: null,
+        commandText: null,
+        errorTextNode: null,
+        del: null,
 
         // Parameters configured in the Modeler.
-        appId: null, 
+        appId: null,
         mfOnFinish: null,
-        mfOnFailure: null, 
-        limit: null, 
-        banList: null, 
-        
+        mfOnFailure: null,
+        limit: null,
+        banList: null,
+
         //internal vars
         _store: null,
         _currentInput: "",
         _pinLocation: 'pin', //default location
-        _pinToCheck: null, 
-        _lockStateEnum: {READY : 0, CHANGE : 1, CONFIRM : 2},
+        _pinToCheck: null,
+        _lockStateEnum: {
+            READY: 0,
+            CHANGE: 1,
+            CONFIRM: 2
+        },
         _lockState: null,
         _failCount: 0,
 
@@ -86,16 +90,19 @@ define([
         postCreate: function () {
             logger.debug(this.id + ".postCreate");
             this._lockState = this._lockStateEnum.READY; //default state
-            var storeId = this.appId; 
-            
+            var storeId = this.appId;
+
             //use appId to find the store location on the device. 
-            try{
+            try {
                 this._store = new cordova.plugins.SecureStorage(
-                    function () { console.log('Success')},
-                    function (error) { console.log('Error ' + error); },
+                    function () {
+                        console.log('Success');
+                    },
+                    function (error) {
+                        console.log('Error ' + error);
+                    },
                     storeId);
-            }
-            catch(err){
+            } catch (err) {
                 console.log(err.message); //most likely addon or cordova failed 
                 return;
             }
@@ -107,139 +114,140 @@ define([
 
         // mxui.widget._WidgetBase.uninitialize is called when the widget is destroyed. Implement to do special tear-down work.
         uninitialize: function () {
-          logger.debug(this.id + ".uninitialize");
+            logger.debug(this.id + ".uninitialize");
         },
-        
+
         _stopBubblingEventOnMobile: function (e) {
             logger.debug(this.id + "._stopBubblingEventOnMobile");
             if (typeof document.ontouchstart !== "undefined") {
                 dojoEvent.stop(e);
             }
         },
-        
+
         _events: function () {
-            
+
             var nl = dojoQuery(".numButtons", this.inputNodes); //get all the num buttons within this domnode
-            
-            dojoOn(nl, dojoTouch.press, dojoLang.hitch(this,function(e){
-                this._stopBubblingEventOnMobile(e); 
+
+            dojoOn(nl, dojoTouch.press, dojoLang.hitch(this, function (e) {
+                this._stopBubblingEventOnMobile(e);
                 this._numberButtonPress(e.currentTarget.value);
             }));
-            
-            dojoOn(this.del, dojoTouch.press, dojoLang.hitch(this, function(e){
+
+            dojoOn(this.del, dojoTouch.press, dojoLang.hitch(this, function (e) {
                 this._stopBubblingEventOnMobile(e);
-                this._removeLastDigit(); 
+                this._removeLastDigit();
             }));
-            
-            
+
+
         },
-        
-        _removeLastDigit: function(){
-            this._currentInput = this._currentInput.slice(0,-1); //remove last char from string - this is fine as well if empty.   
+
+        _removeLastDigit: function () {
+            this._currentInput = this._currentInput.slice(0, -1); //remove last char from string - this is fine as well if empty.   
             this._inputState(); //update ui.  
         },
-        
-        _numberButtonPress: function(number){
-            if(!/^[0-9]{1}/.test(number)){
+
+        _numberButtonPress: function (number) {
+            if (!/^[0-9]{1}/.test(number)) {
                 return; //prevent any strange values. 
             }
-            this._currentInput = this._currentInput + number; 
-            this._verifyInput(); 
+            this._currentInput = this._currentInput + number;
+            this._verifyInput();
         },
-        
-        _verifyInput : function(){
+
+        _verifyInput: function () {
             this._inputState(); //update ui.
-            
-            if(this._currentInput.length === 5){
-                switch(this._lockState){
-                    case this._lockStateEnum.READY:
-                        //check pin before allowing change
-                        this._checkPin(); 
-                        break;
-                    case this._lockStateEnum.CHANGE:
-                        // temp store new key.
-                        this._changePin(); 
-                        break;
-                    case this._lockStateEnum.CONFIRM:
-                        //check new key matches with confirmation.
-                        this._confirmPin(); 
-                        break; 
+
+            if (this._currentInput.length === 5) {
+                switch (this._lockState) {
+                case this._lockStateEnum.READY:
+                    //check pin before allowing change
+                    this._checkPin();
+                    break;
+                case this._lockStateEnum.CHANGE:
+                    // temp store new key.
+                    this._changePin();
+                    break;
+                case this._lockStateEnum.CONFIRM:
+                    //check new key matches with confirmation.
+                    this._confirmPin();
+                    break;
                 }
-                this._resetInput(); 
+                this._resetInput();
             }
-                       
+
         },
-        
-        _inputState : function(){
-            switch(this._currentInput.length){
-                case 1:
-                    dojoDomAttr.set(this.input1, "value", "*");
-                    dojoDomAttr.set(this.input2, "value", "");
-                    dojoDomAttr.set(this.input3, "value", "");
-                    dojoDomAttr.set(this.input4, "value", "");
-                    dojoDomAttr.set(this.input5, "value", "");
-                    break;
-                case 2:
-                    dojoDomAttr.set(this.input1, "value", "*");
-                    dojoDomAttr.set(this.input2, "value", "*");
-                    dojoDomAttr.set(this.input3, "value", "");
-                    dojoDomAttr.set(this.input4, "value", "");
-                    dojoDomAttr.set(this.input5, "value", "");
-                    break;
-                case 3:
-                    dojoDomAttr.set(this.input1, "value", "*");
-                    dojoDomAttr.set(this.input2, "value", "*");
-                    dojoDomAttr.set(this.input3, "value", "*");
-                    dojoDomAttr.set(this.input4, "value", "");
-                    dojoDomAttr.set(this.input5, "value", "");
-                    break;
-                case 4:
-                    dojoDomAttr.set(this.input1, "value", "*");
-                    dojoDomAttr.set(this.input2, "value", "*");
-                    dojoDomAttr.set(this.input3, "value", "*");
-                    dojoDomAttr.set(this.input4, "value", "*");
-                    dojoDomAttr.set(this.input5, "value", "");
-                    break;
-                case 5:
-                    dojoDomAttr.set(this.input1, "value", "*");
-                    dojoDomAttr.set(this.input2, "value", "*");
-                    dojoDomAttr.set(this.input3, "value", "*");
-                    dojoDomAttr.set(this.input4, "value", "*");
-                    dojoDomAttr.set(this.input5, "value", "*");
-                    break;
-                default:
-                    dojoDomAttr.set(this.input1, "value", "");
-                    dojoDomAttr.set(this.input2, "value", "");
-                    dojoDomAttr.set(this.input3, "value", "");
-                    dojoDomAttr.set(this.input4, "value", "");
-                    dojoDomAttr.set(this.input5, "value", "");            
+
+        _inputState: function () {
+            switch (this._currentInput.length) {
+            case 1:
+                dojoDomAttr.set(this.input1, "value", "*");
+                dojoDomAttr.set(this.input2, "value", "");
+                dojoDomAttr.set(this.input3, "value", "");
+                dojoDomAttr.set(this.input4, "value", "");
+                dojoDomAttr.set(this.input5, "value", "");
+                break;
+            case 2:
+                dojoDomAttr.set(this.input1, "value", "*");
+                dojoDomAttr.set(this.input2, "value", "*");
+                dojoDomAttr.set(this.input3, "value", "");
+                dojoDomAttr.set(this.input4, "value", "");
+                dojoDomAttr.set(this.input5, "value", "");
+                break;
+            case 3:
+                dojoDomAttr.set(this.input1, "value", "*");
+                dojoDomAttr.set(this.input2, "value", "*");
+                dojoDomAttr.set(this.input3, "value", "*");
+                dojoDomAttr.set(this.input4, "value", "");
+                dojoDomAttr.set(this.input5, "value", "");
+                break;
+            case 4:
+                dojoDomAttr.set(this.input1, "value", "*");
+                dojoDomAttr.set(this.input2, "value", "*");
+                dojoDomAttr.set(this.input3, "value", "*");
+                dojoDomAttr.set(this.input4, "value", "*");
+                dojoDomAttr.set(this.input5, "value", "");
+                break;
+            case 5:
+                dojoDomAttr.set(this.input1, "value", "*");
+                dojoDomAttr.set(this.input2, "value", "*");
+                dojoDomAttr.set(this.input3, "value", "*");
+                dojoDomAttr.set(this.input4, "value", "*");
+                dojoDomAttr.set(this.input5, "value", "*");
+                break;
+            default:
+                dojoDomAttr.set(this.input1, "value", "");
+                dojoDomAttr.set(this.input2, "value", "");
+                dojoDomAttr.set(this.input3, "value", "");
+                dojoDomAttr.set(this.input4, "value", "");
+                dojoDomAttr.set(this.input5, "value", "");
             }
-        }, 
-        
-        _checkPin: function(){
-            this._verifyPin(this._pinLocation, this._currentInput, dojoLang.hitch(this, function(result){
-                if(result){
-                    this._failCount = 0; //reset failure count. 
-                    dojoHtml.set(this.infoTextNode, "Pincode geverifieerd"); 
-                    dojoHtml.set(this.commandText, "Voer nieuwe pincode in");
+        },
+
+        _checkPin: function () {
+            this._verifyPin(this._pinLocation, this._currentInput, dojoLang.hitch(this, function (result) {
+                if (result) {
+                    this._failCount = 0; //reset failure count.
+                    dojoClass.add(this.errorTextNode, "hidden");
+                    dojoHtml.set(this.commandText, "Kies een nieuwe pincode");
                     this._lockState = this._lockStateEnum.CHANGE; //update lock state
-                }
-                else{
-                    dojoHtml.set(this.infoTextNode, "Pincode fout"); 
+                } else {
+                    dojoHtml.set(this.errorTextNode, "De ingevoerde pincode is niet correct");
+                    dojoClass.remove(this.errorTextNode, "hidden");
                     dojoHtml.set(this.commandText, "Probeer opnieuw de pincode in te voeren");
-                    this._failCount++; 
+                    this._failCount++;
                     //TODO add the text to inform about failure limit etc. 
-                    if(this._failCount >= this.limit){
+                    if (this._failCount >= this.limit) {
                         //call failure action
                         mx.data.action({
                             params: {
-                                actionname: this.mfOnFailure
+                                actionname: this.mfOnFailure,
+                                origin: this.mxform
                             },
-                            callback: function(obj) {
+                            callback: function (obj) {
                                 //should be empty.. 
                                 logger.debug("new pin successful.");
                             },
-                            error: function(error) {
+                            error: function (error) {
                                 logger.debug(error);
                             }
                         });
@@ -247,82 +255,96 @@ define([
                 }
             }));
         },
-        
-        _changePin: function(){    
-            if(this._checkBanList(this._currentInput)){
-                dojoHtml.set(this.infoTextNode, "Pincode te makkelijk, probeer opnieuw"); 
-                dojoHtml.set(this.commandText, "Voer uw nieuwe pincode in");
-            }
-            else{
-                this._pinToCheck = this._currentInput;  
-                this._lockState = this._lockStateEnum.CONFIRM; 
-                dojoHtml.set(this.infoTextNode, "Bevestig pincode"); 
-                dojoHtml.set(this.commandText, "Voer uw nieuwe pincode in");
+
+        _changePin: function () {
+            if (this._checkBanList(this._currentInput)) {
+                dojoHtml.set(this.errorTextNode, "Kies een moeilijkere pincode");
+                dojoClass.remove(this.errorTextNode, "hidden");
+                dojoHtml.set(this.commandText, "Kies een nieuwe pincode");
+            } else {
+                this._pinToCheck = this._currentInput;
+                this._lockState = this._lockStateEnum.CONFIRM;
+                dojoClass.add(this.errorTextNode, "hidden");
+                dojoHtml.set(this.commandText, "Bevestig pincode");
             }
 
         },
-        
-        _confirmPin: function(){
-            if(this._pinToCheck === this._currentInput){ //new pin successful 
+
+        _confirmPin: function () {
+            if (this._pinToCheck === this._currentInput) { //new pin successful 
                 this._setPin(this._pinLocation, this._currentInput); //set the new pin
                 this._lockState = this._lockStateEnum.READY;
-                dojoHtml.set(this.infoTextNode, "Pincode is gewijzigd"); 
-                dojoHtml.set(this.commandText, "Voer uw huidige pincode in");
+                dojoClass.add(this.errorTextNode, "hidden");
+                dojoHtml.set(this.commandText, "Pincode is gewijzig. Voer uw huidige pincode in");
                 //call success MF
                 mx.data.action({
                     params: {
-                        actionname: this.mfOnFinish
+                        actionname: this.mfOnFinish,
+                        origin: this.mxform
                     },
-                    callback: function(obj) {
+                    callback: function (obj) {
                         //should be empty.. 
                         logger.debug("new pin successful.");
                     },
-                    error: function(error) {
+                    error: function (error) {
                         logger.debug(error);
                     }
                 });
+            } else { //pins didn't match
+                this._lockState = this._lockStateEnum.CHANGE;
+                dojoHtml.set(this.errorTextNode, "De ingevoerde pincodes komen niet overeen. Probeer opnieuw");
+                dojoClass.remove(this.errorTextNode, "hidden");
+                dojoHtml.set(this.commandText, "Kies een nieuwe pincode");
             }
-            else{ //pins didn't match
-                this._lockState = this._lockStateEnum.CHANGE; 
-                dojoHtml.set(this.infoTextNode, "Pincode kwam niet overeen"); 
-                dojoHtml.set(this.commandText, "Voer uw pincode in");
-            }
-            this._pinToCheck = ""; 
+            this._pinToCheck = "";
         },
-        
-        _checkBanList : function(value){
-            for(var obj in this.banlist){
-                if(this.banlist[obj].pin === value){
-                    return true; 
+
+        _checkBanList: function (value) {
+            for (var obj in this.banlist) {
+                if (this.banlist[obj].pin === value) {
+                    return true;
                 }
             }
-            return false; 
-        }, 
-        
-        _resetInput : function(){
-            this._currentInput = ""; 
+            return false;
         },
-        
-        _removePin: function(key) {
+
+        _resetInput: function () {
+            this._currentInput = "";
+        },
+
+        _removePin: function (key) {
             this._store.remove(
-                function(key){ console.log('Removed ' + key); },
-                function(error){ console.log('Error ' + error); },
-                key);   
-        },
-        
-        _setPin: function(key, value){
-            this._store.set(
-                function(value){ console.log('new key stored');},
-                function(error){ console.log('error' + error);},
-                key, value); 
-        },
-        
-        _verifyPin: function(key, check, callback){
-            this._store.get(
-                function(value){ console.log('verified'); callback(value === check)},
-                function(error){ console.log('error' + error);},
+                function (key) {
+                    console.log('Removed ' + key);
+                },
+                function (error) {
+                    console.log('Error ' + error);
+                },
                 key);
-            
+        },
+
+        _setPin: function (key, value) {
+            this._store.set(
+                function (value) {
+                    console.log('new key stored');
+                },
+                function (error) {
+                    console.log('error' + error);
+                },
+                key, value);
+        },
+
+        _verifyPin: function (key, check, callback) {
+            this._store.get(
+                function (value) {
+                    console.log('verified');
+                    callback(value === check)
+                },
+                function (error) {
+                    console.log('error' + error);
+                },
+                key);
+
         }
 
 

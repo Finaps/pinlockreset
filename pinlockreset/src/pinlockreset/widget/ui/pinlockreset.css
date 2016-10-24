@@ -7,9 +7,10 @@
     padding: 2px 6px;
 }
 
-.pinlockreset-infoTextNode {
+.pinlockreset-errorTextNode {
     padding: 0.8em 1em;
     margin-top: 10px;
+    text-align: center;
 }
 
 .pinlockreset .pinlockreset-title {
