@@ -275,7 +275,7 @@ define([
                 this._setPin(this._pinLocation, this._currentInput); //set the new pin
                 this._lockState = this._lockStateEnum.READY;
                 dojoClass.add(this.errorTextNode, "hidden");
-                dojoHtml.set(this.commandText, "Pincode is gewijzig. Voer uw huidige pincode in");
+                dojoHtml.set(this.commandText, "Pincode is gewijzigd");
                 //call success MF
                 mx.data.action({
                     params: {
